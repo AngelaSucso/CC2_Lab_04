@@ -1,0 +1,228 @@
+//LABORATORIO 04
+#include <iostream>
+#include <stdlib.h>
+#include <conio.h>
+using namespace std;
+
+//1.
+//	Implemente una clase Curso, en la cual debe considerar.
+class Curso{
+	private:	//Variables miembro: nombre(string), codigo(string), nroAlumnos(int)
+		string nombre;
+		string codigo;
+		int nroAlumnos;
+	public:
+		Curso(){
+			nombre = " "; codigo = " "; nroAlumnos = 0;	//Implementar un constructor por defector, el cual inicializar� las variables,
+			                                           	//si son cadena en " " o si es la edad en 0.
+		}
+		Curso(string _nombre, string _codigo, int _nroAlumnos);//Implementar un contructor que reciba argumentos e inicialice las
+															   //variables miembro con dichos argumentos.
+		string getNombre() const; 	//Funci�n para obtener �nombre�
+		string getCodigo() const; 	//Funci�n para obtener �codigo�
+		int getNroAlumnos() const;	//Funci�n para obtener �nroAlumnos�
+		void setNombre(const string nuevo_nombre);     	//Funci�n para modificar �nombre�
+		void setCodigo(const string nuevo_codigo);     	//Funci�n para modificar �codigo�
+		void setNroAlumnos(const int nuevo_nroAlumnos);	//Funci�n para modificar �nroAlumnos�
+		void mostrarCurso();						   	//Funcion para mostrar las variables nombre, codigo y nroAlumnos
+};
+
+Curso::Curso(string _nombre, string _codigo, int _nroAlumnos){	//Inicializacion de variables
+	nombre = _nombre;
+	codigo = _codigo;
+	nroAlumnos = _nroAlumnos;
+}
+//obtener
+string Curso::getCodigo() const{
+	return codigo;
+}
+string Curso::getNombre() const{
+	return nombre;
+}
+int Curso::getNroAlumnos() const{
+	return nroAlumnos;
+}
+//modificar
+void Curso::setCodigo(const string new_codigo){
+	codigo=new_codigo;
+}
+void Curso::setNombre (const string new_nombre){
+	nombre=new_nombre;
+}
+void Curso::setNroAlumnos (const int new_nroAlumnos){
+	nroAlumnos=new_nroAlumnos;
+}
+void Curso::mostrarCurso(){
+	cout<<"        "<<nombre<<"         "<<codigo<<"         "<<nroAlumnos<<"\n";
+}
+
+//2.
+//	Implementa la clase ArregloDeCursos, la cual representar� un arreglo din�mico de Cursos. �ste debe redimensionar din�micamente su tama�o.
+//	La clase debe tener como varibles miembro privadas: un puntero de tipo Curso y un entero para el tama�o del arreglo.
+class ArregloDeCursos {
+private: 
+	Curso *Materia;	//un puntero de tipo Curso
+	int tam;	//un entero para el tama�o del arreglo
+public:
+	ArregloDeCursos(const Curso cursos[], const int tam);	//Contructor para inicializar los elementos del arreglo
+	ArregloDeCursos(const ArregloDeCursos &o);	//Constructor copia
+	~ArregloDeCursos();			//Destructor
+	void redimensionar (int n);		//Funci�n que redimensiona el tama�o el arreglo din�micamente
+	void pushBack (const Curso &p);	//Funci�n para adicionar un Curso al final del arreglo
+	void insert (const int posicion, const Curso &p); //Funci�n para insertar un Curso en cualquier posici�n del arreglo
+	void remove (const int pos);	//Eliminar una Curso de cualquier posici�n del arreglo
+	const int getSize() const;		//Obtener el tama�o del arreglo
+	void clear();					//Eliminar todos los elementos del arreglo
+	void mostrar();					//Funcion que mostrara las variables dentro de ArreglodeCursos
+};
+ArregloDeCursos::ArregloDeCursos(const Curso cursos[], const int tam){
+	Materia = new Curso [tam];
+	for (int i=0; i<tam; i++)
+		Materia[i]=cursos[i];
+	this->tam=tam;
+}
+//copia
+ArregloDeCursos::ArregloDeCursos(const ArregloDeCursos &o){
+	Materia=o.Materia;
+	tam=o.tam;
+}
+//destructor	
+ArregloDeCursos::~ArregloDeCursos(){
+	delete[] Materia;
+}
+//Debe implementar una funci�n para redimensionar el tama�o el arreglo din�micamente
+void ArregloDeCursos::redimensionar(int n){
+	Curso *aux_Materia=new Curso[n]; //Creacion de un nuevo arreglo usando new n;
+	if (n>tam){
+		for (int i=0; i<tam; i++)	//caso1: n es mayor que tam
+       	aux_Materia[i] = Materia[i];
+      	aux_Materia[n-1]= Curso();
+    }
+	else{
+		for (int i=0; i<n; i++)		//caso2: n es menor o igual que tam
+			aux_Materia[i]=Materia[i];
+	}
+	tam=n;
+	delete []Materia;
+	this->Materia=aux_Materia;
+}
+//Adicionar un Curso al final del arreglo:
+void ArregloDeCursos::pushBack(const Curso &p){
+	redimensionar(this->tam+1);
+	Materia[tam-1]=p;
+}
+//Insertar un Curso en cualquier posici�n del arreglo:
+void ArregloDeCursos::insert(const int posicion, const Curso &p){
+	if (posicion<=tam){
+		redimensionar(tam+1);
+		for (int i=tam-1; i>posicion-1; i--)
+			Materia[i]=Materia[i-1];
+		Materia[posicion-1]=p;		
+	}
+	else
+		cout<<"\nPosicion fuera del rango estimado\n";	
+}
+//Eliminar una Curso de cualquier posici�n del arreglo:
+void ArregloDeCursos::remove(const int pos){
+	if(pos<=tam){
+		for (int i=pos-1; i<tam-1; i++)
+			Materia[i]=Materia[i+1];
+		redimensionar(this->tam-1);
+	}
+	else
+		cout<<"\nPosicion fuera del rango estimado\n";
+}
+//Obtener el tama�o del arreglo:
+const int ArregloDeCursos::getSize() const{
+	return tam;
+}
+//Eliminar todos los elementos del arreglo:
+void ArregloDeCursos::clear(){
+	delete[] Materia;
+	cout<<"\nCursos eliminados, lista vacia\n";
+}
+//Mostrar la lista segun su tama�o
+void ArregloDeCursos::mostrar(){
+	cout<<"Lista de Cursos\n  Materia  -  Nombre  -  Codigo  -  Numero de Alumnos\n";
+	for (int i=0; i<tam; i++){
+		cout<<"    "<<i+1<<"    ";
+		Materia[i].mostrarCurso();
+		cout<<endl;
+	}	
+}
+
+int main(){
+	while (true){					//Inicio mi panel
+		cout<<"SISTEMA DE CURSOS";
+		string variables, nombre, codigo;
+		int numAlum, tam;
+		cout<<"Cuantos cursos desea agregar? ";cin>>tam;
+		Curso materiasCC[tam];
+		for (int i=0; i<tam; i++)
+	        {
+	            cout << "Materia "<<i+1<<": "<<"\nNombre de la Materia: ";cin>>nombre;
+				cout<<"Codigo de la Materia: ";cin>>codigo;
+				cout<<"Numero de Alumnos: ";cin>>numAlum;
+	            Curso variables(nombre, codigo, numAlum);
+	            materiasCC[i]=variables; 
+	        }
+		ArregloDeCursos lista(materiasCC, tam);
+		while (true){
+			cout<<"\nCurso exitosamente creado\nDesea modificar la lista?\n(1)Si?\n(0)No?\n";
+			int num=0;
+			cin>>num;
+			if (num==0)
+				break;
+			else if (num==1){
+				cout<<"\n\nQue desea modificar: \n(1)Adicionar un Curso al final de la lista\n(2)Insertar un Curso en una posicion especifica";
+				cout<<"\n(3)Mostrar tus cursos\n(4)Eliminar un Curso de cualquier posicion\n(5)remover todos los cursos de la lista\n(0)salir";
+				cin>>num;
+				if (num==0)
+					break;
+				else if (num==1){//opcion1 de agregar cursos
+					 cout<<"\nAgregar Curso :D\nNombre de la Materia: ";cin>>nombre;
+					 cout<<"Codigo de la Materia:";cin>>codigo;
+					 cout<<"Numero de alumnos: ";cin>>numAlum;
+					 Curso aux(nombre, codigo, numAlum);
+					 lista.pushBack(aux);
+					 cout<<"\nCurso nuevo creado al final de la lista";
+				}
+				else if(num==2){
+					int pos;
+					lista.mostrar();//opcion2 de agregar cursos segun posicion
+					cout<<"\nPosicion especifica donde desea agregar: ";cin>>pos;
+					cout<<"\nNombre de la Materia: ";cin>>nombre;
+					cout<<"Codigo de la Materia:";cin>>codigo;
+					cout<<"Numero de alumnos: ";cin>>numAlum;
+					Curso aux(nombre, codigo, numAlum);
+					lista.insert(pos,aux);
+				}
+				else if(num==3){//opcion3 mostrar la lista de los cursos
+					cout<<"Mostrando Cursos\n";
+					lista.mostrar();
+				}
+				else if(num==4){//opcion4 eliminar curso segun posicion
+					int pos;
+					lista.mostrar();
+					cout<<"\nQue curso respecto su posicion desea eliminar: ";cin>>pos;
+					lista.remove(pos);
+					lista.mostrar();
+				}
+				else if(num==5){//opcion5 eliminar toda la lista de cursos
+					cout<<"\nEliminando el total de Cursos\n";
+					lista.clear();
+					cout<<"\nCursos eliminados";
+					cout<<"\nNo hay cursos en la lista";
+					break;
+				}
+			}
+		}
+		int num;
+		cout<<"\nDesea salir del Sistema de Cursos?\n(1)Si?\(0)No?";cin>>num;
+		if(num == 1)
+			break;
+		else
+			continue;
+	}
+	getch();
+}
